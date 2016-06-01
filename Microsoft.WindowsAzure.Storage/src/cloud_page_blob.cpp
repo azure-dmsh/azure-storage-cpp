@@ -74,7 +74,7 @@ namespace azure { namespace storage {
             command->set_build_request(std::bind(protocol::put_page, range, page_write::update, md5, condition, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<concurrency::streams::ostream> cloud_page_blob::open_write_async(const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -92,7 +92,7 @@ namespace azure { namespace storage {
         return instance->download_attributes_async(condition, modified_options, context).then([instance, condition, modified_options, context] () -> concurrency::streams::ostream
         {
             return core::cloud_page_blob_ostreambuf(instance, instance->properties().size(), condition, modified_options, context).create_ostream();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<concurrency::streams::ostream> cloud_page_blob::open_write_async(utility::size64_t size, int64_t sequence_number, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -105,7 +105,7 @@ namespace azure { namespace storage {
         return instance->create_async(size, sequence_number, condition, modified_options, context).then([instance, size, condition, modified_options, context]() -> concurrency::streams::ostream
         {
             return core::cloud_page_blob_ostreambuf(instance, size, condition, modified_options, context).create_ostream();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_page_blob::upload_from_stream_async(concurrency::streams::istream source, utility::size64_t length, int64_t sequence_number, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -128,8 +128,8 @@ namespace azure { namespace storage {
             return core::stream_copy_async(source, blob_stream, length).then([blob_stream] (utility::size64_t) -> pplx::task<void>
             {
                 return blob_stream.close();
-            });
-        });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_page_blob::upload_from_file_async(const utility::string_t& path, int64_t sequence_number, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -142,9 +142,9 @@ namespace azure { namespace storage {
                 return stream.close().then([upload_task]()
                 {
                     upload_task.wait();
-                });
-            });
-        });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_page_blob::create_async(utility::size64_t size, int64_t sequence_number, const access_condition& condition, const blob_request_options& options, operation_context context)

@@ -318,13 +318,13 @@ namespace azure { namespace storage {
                             throw;
                         }
                     }
-                });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
             }
             else
             {
                 return pplx::task_from_result(false);
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_blob_container::delete_container_async(const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -370,13 +370,13 @@ namespace azure { namespace storage {
                             throw;
                         }
                     }
-                });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
             }
             else
             {
                 return pplx::task_from_result<bool>(false);
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     list_blob_item_iterator cloud_blob_container::list_blobs(const utility::string_t& prefix, bool use_flat_blob_listing, blob_listing_details::values includes, int max_results, const blob_request_options& options, operation_context context) const
@@ -463,7 +463,7 @@ namespace azure { namespace storage {
         {
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<blob_container_permissions> cloud_blob_container::download_permissions_async(const access_condition& condition, const blob_request_options& options, operation_context context)

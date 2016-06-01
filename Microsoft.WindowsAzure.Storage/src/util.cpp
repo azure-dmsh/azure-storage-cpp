@@ -120,7 +120,7 @@ namespace azure { namespace storage {  namespace core {
                 }
 
                 return (count > 0) && (length_ptr == nullptr || *length_ptr > 0);
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }).then([total_ptr, length] (bool) -> utility::size64_t
         {
             if (length != std::numeric_limits<utility::size64_t>::max() && *total_ptr != length)
@@ -129,7 +129,7 @@ namespace azure { namespace storage {  namespace core {
             }
 
             return *total_ptr;
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     utility::char_t utility_char_tolower(const utility::char_t& character)
@@ -440,7 +440,7 @@ namespace azure { namespace storage {  namespace core {
         return event->create_task().then([event]()
         {
             delete event;
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
 #else
         return event->create_task();
 #endif

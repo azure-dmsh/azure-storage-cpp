@@ -56,7 +56,7 @@ namespace azure { namespace storage {
     {
         return create_async_impl(options, context, /* allow_conflict */ false).then([] (bool)
         {
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_table::create_if_not_exists_async(const table_request_options& options, operation_context context)
@@ -70,14 +70,14 @@ namespace azure { namespace storage {
             }
 
             return instance->create_async_impl(options, context, /* allow_conflict */ true);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_table::delete_table_async(const table_request_options& options, operation_context context)
     {
         return delete_async_impl(options, context, /* allow_not_found */ false).then([] (bool)
         {
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_table::delete_table_if_exists_async(const table_request_options& options, operation_context context)
@@ -91,7 +91,7 @@ namespace azure { namespace storage {
             }
 
             return instance->delete_async_impl(options, context, /* allow_not_found */ true);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_table::exists_async(const table_request_options& options, operation_context context) const
@@ -147,7 +147,7 @@ namespace azure { namespace storage {
                     result.set_etag(std::move(etag));
                     result.set_entity(std::move(entity));
                     return result;
-                });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
             }
         });
         return core::executor<table_result>::execute_async(command, modified_options, context);
@@ -207,7 +207,7 @@ namespace azure { namespace storage {
             {
                 std::vector<table_result> batch_result = protocol::table_response_parsers::parse_batch_results(response, response_buffer, is_query, operations.size());
                 return pplx::task_from_result(batch_result);
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         });
         return core::executor<std::vector<table_result>>::execute_async(command, modified_options, context);
     }
@@ -242,7 +242,7 @@ namespace azure { namespace storage {
             {
                 table_query_segment query_segment(protocol::table_response_parsers::parse_query_results(obj), std::move(next_token));
                 return query_segment;
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         });
         return core::executor<table_query_segment>::execute_async(command, modified_options, context);
     }
@@ -396,7 +396,7 @@ namespace azure { namespace storage {
         {
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
 }} // namespace azure::storage

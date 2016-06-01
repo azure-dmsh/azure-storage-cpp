@@ -129,7 +129,7 @@ namespace azure { namespace storage {
             auto modified_condition = azure::storage::access_condition::generate_if_match_condition(instance->properties().etag());
             modified_condition.set_lease_id(condition.lease_id());
             return core::cloud_blob_istreambuf(instance, modified_condition, modified_options, context).create_istream();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_blob::download_attributes_async(const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -239,13 +239,13 @@ namespace azure { namespace storage {
                             throw;
                         }
                     }
-                });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
             }
             else
             {
                 return pplx::task_from_result(false);
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<utility::string_t> cloud_blob::acquire_lease_async(const lease_time& duration, const utility::string_t& proposed_lease_id, const access_condition& condition, const blob_request_options& options, operation_context context) const
@@ -536,9 +536,9 @@ namespace azure { namespace storage {
                 return stream.close().then([upload_task]()
                 {
                     upload_task.wait();
-                });
-            });
-        });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_blob::exists_async(bool primary_only, const blob_request_options& options, operation_context context)

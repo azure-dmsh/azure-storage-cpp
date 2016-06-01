@@ -39,7 +39,7 @@ namespace azure { namespace storage {
             command->set_build_request(std::bind(protocol::put_block, block_id, md5, condition, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_block_blob::upload_block_list_async(const std::vector<block_list_item>& block_list, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -67,7 +67,7 @@ namespace azure { namespace storage {
             command->set_build_request(std::bind(protocol::put_block_list, *properties, metadata(), request_body.content_md5(), condition, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<std::vector<block_list_item>> cloud_block_blob::download_block_list_async(block_listing_filter listing_filter, const access_condition& condition, const blob_request_options& options, operation_context context) const
@@ -123,7 +123,7 @@ namespace azure { namespace storage {
                         throw;
                     }
                 }
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
         else
         {
@@ -134,7 +134,7 @@ namespace azure { namespace storage {
         return check_condition_task.then([instance, condition, modified_options, context] ()
         {
             return core::cloud_block_blob_ostreambuf(instance, condition, modified_options, context).create_ostream();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_block_blob::upload_from_stream_async(concurrency::streams::istream source, utility::size64_t length, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -188,7 +188,7 @@ namespace azure { namespace storage {
                 command->set_build_request(std::bind(protocol::put_block_blob, *properties, *metadata, condition, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
                 command->set_request_body(request_body);
                 return core::executor<void>::execute_async(command, modified_options, context);
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
 
         return open_write_async(condition, modified_options, context).then([source, length] (concurrency::streams::ostream blob_stream) -> pplx::task<void>
@@ -196,8 +196,8 @@ namespace azure { namespace storage {
             return core::stream_copy_async(source, blob_stream, length).then([blob_stream] (utility::size64_t) -> pplx::task<void>
             {
                 return blob_stream.close();
-            });
-        });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_block_blob::upload_from_file_async(const utility::string_t &path, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -210,9 +210,9 @@ namespace azure { namespace storage {
                 return stream.close().then([upload_task]()
                 {
                     upload_task.wait();
-                });
-            });
-        });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_block_blob::upload_text_async(const utility::string_t& content, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -238,7 +238,7 @@ namespace azure { namespace storage {
 
             std::string utf8_body(reinterpret_cast<char*>(buffer.collection().data()), static_cast<unsigned int>(buffer.size()));
             return utility::conversions::to_string_t(utf8_body);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
 }} // namespace azure::storage

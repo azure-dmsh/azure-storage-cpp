@@ -225,7 +225,7 @@ namespace azure { namespace storage { namespace core {
             return m_inner_streambuf.sync().then([]() -> bool
             {
                 return true;
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
 
         pplx::task<void> _close_write()

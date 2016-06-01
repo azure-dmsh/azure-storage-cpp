@@ -56,7 +56,7 @@ namespace azure { namespace storage { namespace core {
             {
                 return pplx::task_from_exception<bool>(this_pointer->m_currentException);
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     std::shared_ptr<basic_cloud_blob_ostreambuf::buffer_to_upload> basic_cloud_blob_ostreambuf::prepare_buffer()
@@ -89,7 +89,7 @@ namespace azure { namespace storage { namespace core {
         return upload_task.then([result] () -> basic_cloud_blob_ostreambuf::int_type
         {
             return result;
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<size_t> basic_cloud_blob_ostreambuf::_putn(const concurrency::streams::ostream::traits::char_type* ptr, size_t count)
@@ -130,7 +130,7 @@ namespace azure { namespace storage { namespace core {
         return upload_task.then([count] () -> size_t
         {
             return count;
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> basic_cloud_block_blob_ostreambuf::upload_buffer()
@@ -161,7 +161,7 @@ namespace azure { namespace storage { namespace core {
                         {
                             this_pointer->m_currentException = std::current_exception();
                         }
-                    });
+                    }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
                 }
                 catch (...)
                 {
@@ -172,7 +172,7 @@ namespace azure { namespace storage { namespace core {
             {
                 this_pointer->m_semaphore.unlock();
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> basic_cloud_block_blob_ostreambuf::commit_blob()
@@ -186,7 +186,7 @@ namespace azure { namespace storage { namespace core {
             }
 
             return this_pointer->m_blob->upload_block_list_async(this_pointer->m_block_list, this_pointer->m_condition, this_pointer->m_options, this_pointer->m_context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     utility::string_t basic_cloud_block_blob_ostreambuf::get_next_block_id()
@@ -229,7 +229,7 @@ namespace azure { namespace storage { namespace core {
                         {
                             this_pointer->m_currentException = std::current_exception();
                         }
-                    });
+                    }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
                 }
                 catch (...)
                 {
@@ -240,7 +240,7 @@ namespace azure { namespace storage { namespace core {
             {
                 this_pointer->m_semaphore.unlock();
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> basic_cloud_page_blob_ostreambuf::commit_blob()
@@ -252,13 +252,13 @@ namespace azure { namespace storage { namespace core {
             {
                 this_pointer->m_blob->properties().set_content_md5(this_pointer->m_blob_hash_provider.hash());
                 return this_pointer->m_blob->upload_properties_async(this_pointer->m_condition, this_pointer->m_options, this_pointer->m_context);
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
         else
         {
             return _sync().then([] (bool)
             {
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
     }
 
@@ -318,7 +318,7 @@ namespace azure { namespace storage { namespace core {
                         {
                             this_pointer->m_currentException = std::current_exception();
                         }
-                    });
+                    }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
                 }
                 catch (...)
                 {
@@ -329,7 +329,7 @@ namespace azure { namespace storage { namespace core {
             {
                 this_pointer->m_semaphore.unlock();
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> basic_cloud_append_blob_ostreambuf::commit_blob()
@@ -341,13 +341,13 @@ namespace azure { namespace storage { namespace core {
             {
                 this_pointer->m_blob->properties().set_content_md5(this_pointer->m_blob_hash_provider.hash());
                 return this_pointer->m_blob->upload_properties_async(this_pointer->m_condition, this_pointer->m_options, this_pointer->m_context);
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
         else
         {
             return _sync().then([](bool)
             {
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
     }
 

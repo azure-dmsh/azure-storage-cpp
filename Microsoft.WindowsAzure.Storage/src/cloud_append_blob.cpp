@@ -68,7 +68,7 @@ namespace azure { namespace storage {
             command->set_build_request(std::bind(protocol::append_block, md5, condition, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
             command->set_request_body(request_body);
             return core::executor<int64_t>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<utility::string_t> cloud_append_blob::download_text_async(const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -85,7 +85,7 @@ namespace azure { namespace storage {
 
             std::string utf8_body(reinterpret_cast<char*>(buffer.collection().data()), static_cast<unsigned int>(buffer.size()));
             return utility::conversions::to_string_t(utf8_body);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<concurrency::streams::ostream> cloud_append_blob::open_write_async(bool create_new, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -124,7 +124,7 @@ namespace azure { namespace storage {
             }
 
             return core::cloud_append_blob_ostreambuf(instance, modified_condition, modified_options, context).create_ostream();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_append_blob::upload_from_stream_async(concurrency::streams::istream source, utility::size64_t length, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -159,8 +159,8 @@ namespace azure { namespace storage {
             return core::stream_copy_async(source, blob_stream, length).then([blob_stream](utility::size64_t) -> pplx::task<void>
             {
                 return blob_stream.close();
-            });
-        });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_append_blob::upload_from_file_async(const utility::string_t &path, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -173,9 +173,9 @@ namespace azure { namespace storage {
                 return stream.close().then([upload_task]()
                 {
                     upload_task.wait();
-                });
-            });
-        });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_append_blob::upload_text_async(const utility::string_t& content, const access_condition& condition, const blob_request_options& options, operation_context context)
@@ -202,9 +202,9 @@ namespace azure { namespace storage {
                 return stream.close().then([upload_task]()
                 {
                     upload_task.wait();
-                });
-            });
-        });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_append_blob::append_text_async(const utility::string_t& content, const access_condition& condition, const blob_request_options& options, operation_context context)

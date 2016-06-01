@@ -52,7 +52,7 @@ namespace azure { namespace storage { namespace core {
         return download_if_necessary(1).then([this_pointer] (bool) -> pplx::task<basic_cloud_blob_istreambuf::int_type>
         {
             return this_pointer->m_buffer.bumpc();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     basic_cloud_blob_istreambuf::int_type basic_cloud_blob_istreambuf::_sbumpc()
@@ -67,7 +67,7 @@ namespace azure { namespace storage { namespace core {
         return download_if_necessary(1).then([this_pointer] (bool) -> pplx::task<basic_cloud_blob_istreambuf::int_type>
         {
             return this_pointer->m_buffer.getc();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     basic_cloud_blob_istreambuf::int_type basic_cloud_blob_istreambuf::_sgetc()
@@ -82,7 +82,7 @@ namespace azure { namespace storage { namespace core {
         return download_if_necessary(2).then([this_pointer] (bool) -> pplx::task<basic_cloud_blob_istreambuf::int_type>
         {
             return this_pointer->m_buffer.nextc();
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<basic_cloud_blob_istreambuf::int_type> basic_cloud_blob_istreambuf::_ungetc()
@@ -96,7 +96,7 @@ namespace azure { namespace storage { namespace core {
         return download_if_necessary(1).then([this_pointer, ptr, count] (bool) -> pplx::task<size_t>
         {
             return this_pointer->m_buffer.getn(ptr, count);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     size_t basic_cloud_blob_istreambuf::_scopy(_Out_writes_(count) char_type* ptr, _In_ size_t count)
@@ -171,7 +171,7 @@ namespace azure { namespace storage { namespace core {
                 this_pointer->m_currentException = std::current_exception();
                 return pplx::task_from_result<bool>(false);
             }
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
 }}} // namespace azure::storage::core

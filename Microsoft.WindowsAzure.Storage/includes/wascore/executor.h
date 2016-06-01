@@ -71,7 +71,7 @@ namespace azure { namespace storage { namespace core {
             {
                 provider.close();
                 return istream_descriptor(concurrency::streams::container_stream<std::vector<uint8_t>>::open_istream(temp_buffer.collection()), buffer_task.get(), provider.hash());
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
 
         bool is_valid() const
@@ -286,7 +286,7 @@ namespace azure { namespace storage { namespace core {
                 return m_postprocess_response(response, result, descriptor, context).then([this](pplx::task<T> task)
                 {
                     m_result = task.get();
-                });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
             }
 
             return pplx::task_from_result();
@@ -520,9 +520,9 @@ namespace azure { namespace storage { namespace core {
                             }
 
                             throw storage_exception(utility::conversions::to_utf8string(response.reason_phrase()));
-                        });
+                        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
                     }
-                }).then([instance](pplx::task<web::http::http_response> get_body_task) -> pplx::task<void>
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution()).then([instance](pplx::task<web::http::http_response> get_body_task) -> pplx::task<void>
                 {
                     // 9. Evaluate response & parse results
                     auto response = get_body_task.get();
@@ -567,8 +567,8 @@ namespace azure { namespace storage { namespace core {
                             throw;
                         }
 
-                    });
-                }).then([instance](pplx::task<void> final_task) -> pplx::task<bool>
+                    }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution()).then([instance](pplx::task<void> final_task) -> pplx::task<bool>
                 {
                     bool retryable_exception = true;
                     instance->m_context._get_impl()->add_request_result(instance->m_request_result);
@@ -651,12 +651,12 @@ namespace azure { namespace storage { namespace core {
                         {
                             // Returning true here will tell the outer do_while loop to loop one more time.
                             return true;
-                        });
+                        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
                     }
 
                     // Returning false here will cause do_while to exit.
                     return pplx::task_from_result<bool>(false);
-                });
+                }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
             }).then([instance](pplx::task<bool> loop_task)
             {
                 instance->m_context.set_end_time(utility::datetime::utc_now());
@@ -666,7 +666,7 @@ namespace azure { namespace storage { namespace core {
                 {
                     logger::instance().log(instance->m_context, client_log_level::log_level_informational, _XPLATSTR("Operation completed successfully"));
                 }
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
 
     private:
@@ -833,7 +833,7 @@ namespace azure { namespace storage { namespace core {
             {
                 task.get();
                 return command->result();
-            });
+            }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
         }
     };
 

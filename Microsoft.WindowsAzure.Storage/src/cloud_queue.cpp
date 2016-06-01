@@ -43,7 +43,7 @@ namespace azure { namespace storage {
     {
         return create_async_impl(options, context, /* allow_conflict */ false).then([] (bool)
         {
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_queue::create_if_not_exists_async(const queue_request_options& options, operation_context context)
@@ -57,14 +57,14 @@ namespace azure { namespace storage {
             }
 
             return instance->create_async_impl(options, context, /* allow_conflict */ true);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<void> cloud_queue::delete_queue_async(const queue_request_options& options, operation_context context)
     {
         return delete_async_impl(options, context, /* allow_not_found */ false).then([] (bool)
         {
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_queue::delete_queue_if_exists_async(const queue_request_options& options, operation_context context)
@@ -78,7 +78,7 @@ namespace azure { namespace storage {
             }
 
             return instance->delete_async_impl(options, context, /* allow_not_found */ true);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<bool> cloud_queue::exists_async(const queue_request_options& options, operation_context context) const
@@ -385,7 +385,7 @@ namespace azure { namespace storage {
         {
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     utility::string_t cloud_queue::get_shared_access_signature(const queue_shared_access_policy& policy, const utility::string_t& stored_policy_identifier) const

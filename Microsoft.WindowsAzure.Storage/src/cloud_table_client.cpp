@@ -83,7 +83,7 @@ namespace azure { namespace storage {
 
             table_result_segment result_segment(std::move(table_results), query_segment.continuation_token());
             return result_segment;
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<service_properties> cloud_table_client::download_service_properties_async(const table_request_options& options, operation_context context) const

@@ -50,7 +50,7 @@ namespace azure { namespace storage {
         {
             command->set_request_body(request_body);
             return core::executor<void>::execute_async(command, modified_options, context);
-        });
+        }, Concurrency::cancellation_token::none(), Concurrency::task_continuation_context::use_synchronous_execution());
     }
 
     pplx::task<service_stats> cloud_client::download_service_stats_base_async(const request_options& modified_options, operation_context context) const

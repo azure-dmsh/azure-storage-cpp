@@ -7,15 +7,6 @@
     <Solution Include="build.sln" >      
         <Properties>Configuration=Debug;Platform=Win32</Properties>
     </Solution>
-    <Solution Include="build.sln" >
-        <Properties>Configuration=Release;Platform=Win32</Properties>
-    </Solution>
-    <Solution Include="build.sln" >
-        <Properties>Configuration=Debug;Platform=x64</Properties>
-    </Solution>
-    <Solution Include="build.sln" >
-        <Properties>Configuration=Release;Platform=x64</Properties>
-    </Solution>
   </ItemGroup>
 
   <Target Name="RestorePackages">
